@@ -1,17 +1,24 @@
 package committee.nova.fs.common.tools;
 
+import committee.nova.fs.common.block.api.IFireSource;
 import committee.nova.fs.common.event.FireSourceSpreadFireEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.function.BiFunction;
+
+import static committee.nova.fs.FireSource.*;
+import static net.minecraft.world.level.block.Blocks.*;
 
 public class Utils {
     /**
@@ -50,5 +57,43 @@ public class Utils {
         final var event = new FireSourceSpreadFireEvent(level, pos, sourcePos, state);
         MinecraftForge.EVENT_BUS.post(event);
         return event.isCanceled() ? event.getOriginalState() : event.getNewState();
+    }
+
+
+    public static boolean isFireSrc(Level level, BlockPos pos) {
+        return getFireSrcType(level, pos) != 0;
+    }
+
+    public static int getFireSrcType(Level level, BlockPos pos) {
+        final var state = level.getBlockState(pos);
+        if (campfireIsFireSrc.get() && (state.is(CAMPFIRE) || state.is(SOUL_CAMPFIRE))) return 1;
+        if (furnaceIsFireSrc.get() && (state.is(FURNACE) || state.is(BLAST_FURNACE) || state.is(SMOKER))) return 2;
+        if (torchIsFireSrc.get() && (state.getBlock() instanceof TorchBlock)) return 3;
+        if (state.getBlock() instanceof IFireSource) return 4;
+        return 0;
+    }
+
+    public static int getDangerousnessByHeat(Level level, BlockPos pos) {
+        final var state = level.getBlockState(pos);
+        final var srcType = getFireSrcType(level, pos);
+        return switch (srcType) {
+            case 1, 2, 3 -> 4 - srcType;
+            case 4 -> Mth.clamp(((IFireSource) state.getBlock()).getHeat(level, pos), 0, 100) / 30 + 1;
+            default -> 0;
+        };
+    }
+
+    public static MutableComponent getTips(Level level, BlockPos pos) {
+        final var block = level.getBlockState(pos).getBlock();
+        final var srcType = getFireSrcType(level, pos);
+        final var heatLevel = switch (srcType) {
+            case 1 -> 50;
+            case 2 -> 25;
+            case 3 -> 2;
+            case 4 -> ((IFireSource) block).getHeat(level, pos);
+            default -> 0;
+        };
+        final var customName = (srcType != 4) ? block.getName().getString() : ((IFireSource) block).getCustomDisplayNameAsFireDanger(level, pos).getString();
+        return new TranslatableComponent("tips.firesafety.danger.firesource", customName, heatLevel);
     }
 }

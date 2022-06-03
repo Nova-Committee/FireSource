@@ -2,27 +2,16 @@ package committee.nova.fs;
 
 import committee.nova.firesafety.api.FireSafetyApi;
 import committee.nova.firesafety.api.event.FireSafetyExtensionEvent;
-import committee.nova.fs.common.block.api.IFireSource;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.TorchBlock;
+import committee.nova.fs.common.tools.Utils;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import static net.minecraft.world.level.block.Blocks.*;
 
 @Mod(FireSource.MODID)
 public class FireSource {
-    public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "firesource";
     public static final String MODNAME = "FireSource";
     public static final ForgeConfigSpec COMMON_CONFIG;
@@ -55,43 +44,6 @@ public class FireSource {
     }
 
     public void onExtension(FireSafetyExtensionEvent event) {
-        event.addFireDanger(MODNAME, (short) 32222, new FireSafetyApi.FireDangerBlock(this::isFireSrc, this::getDangerousnessByHeat, this::getTips));
-    }
-
-    public boolean isFireSrc(Level level, BlockPos pos) {
-        return getFireSrcType(level, pos) != 0;
-    }
-
-    public int getFireSrcType(Level level, BlockPos pos) {
-        final var state = level.getBlockState(pos);
-        if (campfireIsFireSrc.get() && (state.is(CAMPFIRE) || state.is(SOUL_CAMPFIRE))) return 1;
-        if (furnaceIsFireSrc.get() && (state.is(FURNACE) || state.is(BLAST_FURNACE) || state.is(SMOKER))) return 2;
-        if (torchIsFireSrc.get() && (state.getBlock() instanceof TorchBlock)) return 3;
-        if (state.getBlock() instanceof IFireSource) return 4;
-        return 0;
-    }
-
-    public int getDangerousnessByHeat(Level level, BlockPos pos) {
-        final var state = level.getBlockState(pos);
-        final var srcType = getFireSrcType(level, pos);
-        return switch (srcType) {
-            case 1, 2, 3 -> 4 - srcType;
-            case 4 -> Mth.clamp(((IFireSource) state.getBlock()).getHeat(level, pos), 0, 100) / 30 + 1;
-            default -> 0;
-        };
-    }
-
-    public MutableComponent getTips(Level level, BlockPos pos) {
-        final var block = level.getBlockState(pos).getBlock();
-        final var srcType = getFireSrcType(level, pos);
-        final var heatLevel = switch (srcType) {
-            case 1 -> 50;
-            case 2 -> 25;
-            case 3 -> 2;
-            case 4 -> ((IFireSource) block).getHeat(level, pos);
-            default -> 0;
-        };
-        final var customName = (srcType != 4) ? block.getName().getString() : ((IFireSource) block).getCustomDisplayNameAsFireDanger(level, pos).getString();
-        return new TranslatableComponent("tips.firesafety.danger.firesource", customName, heatLevel);
+        event.addFireDanger(MODNAME, (short) 32222, new FireSafetyApi.FireDangerBlock(Utils::isFireSrc, Utils::getDangerousnessByHeat, Utils::getTips));
     }
 }
