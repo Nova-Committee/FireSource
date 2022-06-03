@@ -76,7 +76,7 @@ public class FireSource {
         final var srcType = getFireSrcType(level, pos);
         return switch (srcType) {
             case 1, 2, 3 -> 4 - srcType;
-            case 4 -> Mth.clamp(((IFireSource) state.getBlock()).getHeat().apply(level, pos), 0, 100) / 30 + 1;
+            case 4 -> Mth.clamp(((IFireSource) state.getBlock()).getHeat(level, pos), 0, 100) / 30 + 1;
             default -> 0;
         };
     }
@@ -87,7 +87,7 @@ public class FireSource {
             case 1 -> 50;
             case 2 -> 25;
             case 3 -> 2;
-            case 4 -> ((IFireSource) block).getHeat().apply(level, pos);
+            case 4 -> ((IFireSource) block).getHeat(level, pos);
             default -> 0;
         };
         return new TranslatableComponent("tips.firesafety.danger.firesource", block.getName().getString(), heatLevel);

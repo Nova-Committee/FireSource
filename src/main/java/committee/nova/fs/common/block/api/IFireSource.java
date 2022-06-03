@@ -2,9 +2,9 @@ package committee.nova.fs.common.block.api;
 
 import committee.nova.fs.common.tools.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Level;
-
-import java.util.function.BiFunction;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Implement this to make your block a custom fire source.
@@ -12,8 +12,14 @@ import java.util.function.BiFunction;
  * @author Tapio
  */
 public interface IFireSource {
-    default BiFunction<Level, BlockPos, Integer> getHeat() {
-        return (l, p) -> 25;
+    /**
+     * @param level The level the fire source in
+     * @param pos   The fire source's pos
+     * @return The heat value of the fire source.
+     * The greater the value is, the more possibility && larger range the fire spreads
+     */
+    default int getHeat(Level level, BlockPos pos) {
+        return 25;
     }
 
     /**
@@ -21,6 +27,17 @@ public interface IFireSource {
      * @param pos   The fire source's pos
      */
     default void tickFireSpread(Level level, BlockPos pos) {
-        Utils.tickFireSpread(getHeat(), level, pos);
+        Utils.tickFireSpread(this::getHeat, level, pos);
+    }
+
+    /**
+     * @param level The level the fire source in
+     * @param pos   The fire source's pos
+     * @return The custom name of the fire source to display as a fire danger when FireSafety is loaded.
+     * By default, returns null to use the block's origin name
+     */
+    @Nullable
+    default MutableComponent getCustomDisplayNameAsFireDanger(Level level, BlockPos pos) {
+        return null;
     }
 }
