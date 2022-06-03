@@ -83,13 +83,15 @@ public class FireSource {
 
     public MutableComponent getTips(Level level, BlockPos pos) {
         final var block = level.getBlockState(pos).getBlock();
-        final var heatLevel = switch (getFireSrcType(level, pos)) {
+        final var srcType = getFireSrcType(level, pos);
+        final var heatLevel = switch (srcType) {
             case 1 -> 50;
             case 2 -> 25;
             case 3 -> 2;
             case 4 -> ((IFireSource) block).getHeat(level, pos);
             default -> 0;
         };
-        return new TranslatableComponent("tips.firesafety.danger.firesource", block.getName().getString(), heatLevel);
+        final var customName = (srcType != 4) ? block.getName().getString() : ((IFireSource) block).getCustomDisplayNameAsFireDanger(level, pos).getString();
+        return new TranslatableComponent("tips.firesafety.danger.firesource", customName, heatLevel);
     }
 }

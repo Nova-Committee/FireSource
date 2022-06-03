@@ -4,7 +4,6 @@ import committee.nova.fs.common.tools.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Implement this to make your block a custom fire source.
@@ -34,10 +33,9 @@ public interface IFireSource {
      * @param level The level the fire source in
      * @param pos   The fire source's pos
      * @return The custom name of the fire source to display as a fire danger when FireSafety is loaded.
-     * By default, returns null to use the block's origin name
+     * By default, returns the block's origin name
      */
-    @Nullable
     default MutableComponent getCustomDisplayNameAsFireDanger(Level level, BlockPos pos) {
-        return null;
+        return level.getBlockState(pos).getBlock().getName();
     }
 }
