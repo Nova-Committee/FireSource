@@ -1,0 +1,11 @@
+modLoader = "javafml"
+loaderVersion = "[38,)"
+license = "AGPL v3"
+[[mods]]
+modId = "firesource"
+version = "1.0.0"
+displayName = "FireSource"
+credits = ""
+authors = "Tapio"
+description = '''
+'''

@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "committee.nova.fs.common.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MixinAbstractFurnaceBlockEntity",
+    "MixinBlockBehaviour",
+    "MixinCampfireBlockEntity"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "firesource.mixin-refmap.json",
+  "minVersion": "0.8"
+}
