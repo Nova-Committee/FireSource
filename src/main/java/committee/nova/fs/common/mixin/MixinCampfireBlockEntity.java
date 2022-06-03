@@ -18,6 +18,6 @@ public abstract class MixinCampfireBlockEntity {
     private static void onCookTick(Level level, BlockPos pos, BlockState state, CampfireBlockEntity campfire, CallbackInfo ci) {
         if (!state.getValue(LIT)) return;
         if (level.random.nextInt(5001) > 77) return;
-        Utils.tickFireSpread((l, p) -> 50, level, pos, level.random);
+        Utils.tickFireSpread((l, p) -> 50, level, pos);
     }
 }

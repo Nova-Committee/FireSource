@@ -18,6 +18,6 @@ public abstract class MixinAbstractFurnaceBlockEntity {
     private static void onServerTick(Level level, BlockPos pos, BlockState state, AbstractFurnaceBlockEntity furnace, CallbackInfo ci) {
         if (!state.getValue(LIT)) return;
         if (level.random.nextInt(5001) > 77) return;
-        Utils.tickFireSpread((l, p) -> 25, level, pos, level.random);
+        Utils.tickFireSpread((l, p) -> 25, level, pos);
     }
 }

@@ -11,11 +11,14 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 
-import java.util.Random;
 import java.util.function.BiFunction;
 
 public class Utils {
-    public static void tickFireSpread(BiFunction<Level, BlockPos, Integer> heatGetter, Level level, BlockPos pos, Random random) {
+    /**
+     * Default function to simulate the process of fire spreading from a fire source, can also be used in your blockEntities' tick functions
+     */
+    public static void tickFireSpread(BiFunction<Level, BlockPos, Integer> heatGetter, Level level, BlockPos pos) {
+        final var random = level.random;
         final var heat = heatGetter.apply(level, pos);
         final var possibility = Mth.clamp(heat, 0, 100);
         if (random.nextInt(101) > possibility) return;

@@ -6,6 +6,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 
+/**
+ * The event of fire sources' fire spreading.
+ * Can be cancelled.
+ * Very similar to the FluidPlaceBlockEvent
+ *
+ * @see net.minecraftforge.event.world.BlockEvent.FluidPlaceBlockEvent
+ * FluidPlaceBlockEvent
+ */
 @Cancelable
 public class FireSourceSpreadFireEvent extends BlockEvent {
     private final BlockPos sourcePos;
