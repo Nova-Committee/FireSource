@@ -18,6 +18,7 @@ public class FireSource {
     public static final ForgeConfigSpec.BooleanValue furnaceIsFireSrc;
     public static final ForgeConfigSpec.BooleanValue campfireIsFireSrc;
     public static final ForgeConfigSpec.BooleanValue torchIsFireSrc;
+    public static final ForgeConfigSpec.BooleanValue magmaIsFireSrc;
 
     static {
         final var builder = new ForgeConfigSpec.Builder();
@@ -28,6 +29,8 @@ public class FireSource {
                 .define("campfire_fs", true);
         torchIsFireSrc = builder.comment("Is torch a fire source?")
                 .define("torch_fs", false);
+        magmaIsFireSrc = builder.comment("Is magma a fire source?")
+                .define("magma_fs", true);
         COMMON_CONFIG = builder.build();
     }
 

@@ -1,4 +1,4 @@
-package committee.nova.fs.common.event;
+package committee.nova.fs.api.event;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;

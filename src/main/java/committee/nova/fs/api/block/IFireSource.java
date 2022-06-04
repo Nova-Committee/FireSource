@@ -1,4 +1,4 @@
-package committee.nova.fs.common.block.api;
+package committee.nova.fs.api.block;
 
 import committee.nova.fs.common.tools.Utils;
 import net.minecraft.core.BlockPos;
