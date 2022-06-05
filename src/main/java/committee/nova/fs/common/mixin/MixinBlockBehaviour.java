@@ -32,7 +32,7 @@ public abstract class MixinBlockBehaviour {
     @Inject(method = "isRandomlyTicking", at = @At("RETURN"), cancellable = true)
     public void randomlyTicking(CallbackInfoReturnable<Boolean> cir) {
         final var block = getBlock();
-        cir.setReturnValue((torchIsFireSrc.get() && (block instanceof TorchBlock)) || block instanceof IFireSource || block.isRandomlyTicking(asState()));
+        cir.setReturnValue(block instanceof IFireSource || (torchIsFireSrc.get() && (block instanceof TorchBlock)) || block.isRandomlyTicking(asState()));
     }
 
     @Inject(method = "randomTick", at = @At("HEAD"))
