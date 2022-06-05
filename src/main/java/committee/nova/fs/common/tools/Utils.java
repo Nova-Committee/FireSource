@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.TorchBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 
+import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 import static committee.nova.fs.FireSource.*;
@@ -26,12 +27,20 @@ public class Utils {
      * Default function to simulate the process of fire spreading from a fire source, can also be used in your blockEntities' tick functions
      */
     public static void tickFireSpread(BiFunction<Level, BlockPos, Integer> heatGetter, Level level, BlockPos pos) {
+        tickFireSpread(heatGetter, null, level, pos);
+    }
+
+    /**
+     * @param spreadRange The range of fire spreading
+     */
+    public static void tickFireSpread(BiFunction<Level, BlockPos, Integer> heatGetter, @Nullable BiFunction<Level, BlockPos, Iterable<BlockPos>> spreadRange, Level level, BlockPos pos) {
         final var random = level.random;
         final var heat = heatGetter.apply(level, pos);
         final var possibility = Mth.clamp(heat, 0, 100);
         if (random.nextInt(101) > possibility) return;
         final var range = (int) Math.sqrt(heat);
-        final var blocks = BlockPos.betweenClosed(pos.offset(-range, -range, -range), pos.offset(range, range, range));
+        final var blocks = spreadRange != null ?
+                spreadRange.apply(level, pos) : BlockPos.betweenClosed(pos.offset(-range, -range, -range), pos.offset(range, range, range));
         for (final var p : blocks) {
             if (random.nextInt(101) > 50) continue;
             if (level.getBlockState(p).isAir() && hasFlammableNeighbours(level, p)) {
